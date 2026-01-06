@@ -85,9 +85,25 @@ export function SummaryCards({
       </div>
 
       {/* Diferença (agora manual) */}
-      <div className="bg-card rounded-lg border p-4 card-shadow">
+      <div className={`bg-card rounded-lg border p-4 card-shadow ${
+        difference === 0 ? 'border-success/50 bg-success/5' : 
+        difference > 0 ? 'border-info/50 bg-info/5' : 
+        difference < 0 ? 'border-destructive/50 bg-destructive/5' : ''
+      }`}>
         <div className="flex items-center gap-2 text-muted-foreground mb-2">
           <span className="text-sm font-medium">Diferença</span>
+          {difference !== 0 && (
+            <span className={`text-xs px-2 py-0.5 rounded-full ${
+              difference > 0 ? 'bg-info/20 text-info' : 'bg-destructive/20 text-destructive'
+            }`}>
+              {difference > 0 ? 'Sobra' : 'Falta'}
+            </span>
+          )}
+          {difference === 0 && difference !== null && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-success/20 text-success">
+              OK
+            </span>
+          )}
         </div>
         {isReadOnly ? (
           <DifferenceIndicator difference={difference} size="lg" />
@@ -97,7 +113,12 @@ export function SummaryCards({
             step="0.01"
             value={difference || ''}
             onChange={(e) => onDifferenceChange(parseFloat(e.target.value) || 0)}
-            className="w-full text-2xl font-bold font-body bg-transparent border-b border-dashed border-muted-foreground/30 focus:border-primary focus:outline-none text-foreground"
+            className={`w-full text-2xl font-bold font-body bg-transparent border-b border-dashed focus:outline-none ${
+              difference === 0 ? 'text-success border-success/50' :
+              difference > 0 ? 'text-info border-info/50' :
+              difference < 0 ? 'text-destructive border-destructive/50' :
+              'text-foreground border-muted-foreground/30'
+            }`}
             placeholder="0,00"
           />
         )}
