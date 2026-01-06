@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Conference, ConferenceItem, ConferenceSummary, DENOMINATIONS } from '@/types/conference';
+import { Conference, ConferenceItem, ConferenceSummary, DENOMINATIONS, SPECIAL_DENOMINATIONS, SpecialDenomination } from '@/types/conference';
 
 const STORAGE_KEY = 'pharmacy-vault-conferences';
 
@@ -30,7 +30,22 @@ export function useConferences() {
       currencyType: denom < 1 ? 'Moeda' : denom <= 2 ? 'Moeda' : 'Nota',
       financialCategory: 'Cofre',
       observations: '',
+      isManualValue: denom === 2.00, // R$ 2,00 permite edição manual
     }));
+
+    // Adiciona itens especiais (Troco e Diversos)
+    const specialItems: ConferenceItem[] = SPECIAL_DENOMINATIONS.map((denom, index) => ({
+      id: `item-special-${index}`,
+      denomination: denom as SpecialDenomination,
+      quantity: 0,
+      calculatedValue: 0,
+      currencyType: 'Outro' as const,
+      financialCategory: denom === 'Troco' ? 'Fundo de Troco' : 'Diversos',
+      observations: '',
+      isManualValue: true, // Sempre permite edição manual
+    }));
+
+    const allItems = [...defaultItems, ...specialItems];
 
     const newConference: Conference = {
       id: `conf-${Date.now()}`,
@@ -38,7 +53,7 @@ export function useConferences() {
       shift,
       responsible,
       status: 'Em andamento',
-      items: defaultItems,
+      items: allItems,
       expectedValue: 0,
       createdAt: new Date().toISOString(),
     };
@@ -56,7 +71,11 @@ export function useConferences() {
       const updatedItems = prev.items.map(item => {
         if (item.id === itemId) {
           const newItem = { ...item, ...updates };
-          newItem.calculatedValue = newItem.quantity * newItem.denomination;
+          // Se for item com valor manual, não recalcula automaticamente
+          // (a menos que o calculatedValue tenha sido explicitamente atualizado)
+          if (!newItem.isManualValue && typeof newItem.denomination === 'number') {
+            newItem.calculatedValue = newItem.quantity * newItem.denomination;
+          }
           return newItem;
         }
         return item;
