@@ -2,6 +2,7 @@ import { Conference, ConferenceSummary } from '@/types/conference';
 import { StatusBadge } from './StatusBadge';
 import { SummaryCards } from './SummaryCards';
 import { CountingTable } from './CountingTable';
+import { ConferenceChecklist } from './ConferenceChecklist';
 import { Button } from '@/components/ui/button';
 import { exportToExcel, exportToPDF } from '@/utils/exportUtils';
 import { 
@@ -151,6 +152,12 @@ export function ConferenceView({
           isReadOnly={isReadOnly}
         />
       </div>
+
+      {/* Checklist */}
+      <ConferenceChecklist
+        conferenceId={conference.id}
+        isReadOnly={isReadOnly}
+      />
     </div>
   );
 }
