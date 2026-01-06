@@ -132,7 +132,7 @@ export function HistoryTable({
               <th>Turno</th>
               <th>Responsável</th>
               <th>Total Geral</th>
-              <th>Valor Esperado</th>
+              <th>Segurança</th>
               <th>Diferença</th>
               <th>Status</th>
               <th className="text-center">Ações</th>
@@ -150,7 +150,7 @@ export function HistoryTable({
                     {formatCurrency(summary.totalGeneral)}
                   </td>
                   <td className="font-mono">
-                    {formatCurrency(summary.expectedValue)}
+                    {formatCurrency(summary.securityValue)}
                   </td>
                   <td>
                     <DifferenceIndicator difference={summary.difference} size="sm" />

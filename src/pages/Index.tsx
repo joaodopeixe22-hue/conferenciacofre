@@ -10,7 +10,8 @@ const Index = () => {
     currentConference,
     createNewConference,
     updateItem,
-    updateExpectedValue,
+    updateSecurityValue,
+    updateDifference,
     calculateSummary,
     finalizeConference,
     loadConference,
@@ -52,7 +53,8 @@ const Index = () => {
             conference={currentConference}
             summary={summary}
             onUpdateItem={updateItem}
-            onUpdateExpectedValue={updateExpectedValue}
+            onUpdateSecurityValue={updateSecurityValue}
+            onUpdateDifference={updateDifference}
             onFinalize={finalizeConference}
             onBack={clearCurrentConference}
           />

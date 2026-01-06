@@ -42,7 +42,7 @@ export const exportToExcel = (conference: Conference, summary: ConferenceSummary
     { 'Descrição': 'Total em Moedas', 'Valor': formatCurrency(summary.totalCoins) },
     { 'Descrição': 'Total em Notas', 'Valor': formatCurrency(summary.totalBills) },
     { 'Descrição': 'Total Geral', 'Valor': formatCurrency(summary.totalGeneral) },
-    { 'Descrição': 'Valor Esperado', 'Valor': formatCurrency(summary.expectedValue) },
+    { 'Descrição': 'Segurança', 'Valor': formatCurrency(summary.securityValue) },
     { 'Descrição': 'Diferença', 'Valor': formatCurrency(summary.difference) },
   ];
 
@@ -112,7 +112,7 @@ export const exportToPDF = (conference: Conference, summary: ConferenceSummary):
     ['Total em Moedas', formatCurrency(summary.totalCoins)],
     ['Total em Notas', formatCurrency(summary.totalBills)],
     ['Total Geral', formatCurrency(summary.totalGeneral)],
-    ['Valor Esperado', formatCurrency(summary.expectedValue)],
+    ['Segurança', formatCurrency(summary.securityValue)],
     ['Diferença', formatCurrency(summary.difference)],
   ];
 
@@ -138,7 +138,7 @@ export const exportHistoryToExcel = (conferences: Conference[], calculateSummary
       'Turno': conf.shift,
       'Responsável': conf.responsible,
       'Total Geral': formatCurrency(summary.totalGeneral),
-      'Valor Esperado': formatCurrency(summary.expectedValue),
+      'Segurança': formatCurrency(summary.securityValue),
       'Diferença': formatCurrency(summary.difference),
       'Status': conf.status,
     };
