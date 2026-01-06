@@ -31,7 +31,8 @@ export interface Conference {
   responsible: string;
   status: ConferenceStatus;
   items: ConferenceItem[];
-  expectedValue: number;
+  securityValue: number; // Antigo "Valor Esperado", renomeado para "Segurança"
+  difference: number; // Diferença inserida manualmente
   createdAt: string;
   finalizedAt?: string;
 }
@@ -40,6 +41,6 @@ export interface ConferenceSummary {
   totalCoins: number;
   totalBills: number;
   totalGeneral: number;
-  expectedValue: number;
+  securityValue: number;
   difference: number;
 }

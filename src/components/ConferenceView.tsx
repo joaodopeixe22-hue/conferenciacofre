@@ -21,7 +21,8 @@ interface ConferenceViewProps {
   conference: Conference;
   summary: ConferenceSummary;
   onUpdateItem: (itemId: string, updates: Partial<import('@/types/conference').ConferenceItem>) => void;
-  onUpdateExpectedValue: (value: number) => void;
+  onUpdateSecurityValue: (value: number) => void;
+  onUpdateDifference: (value: number) => void;
   onFinalize: () => void;
   onBack: () => void;
 }
@@ -30,7 +31,8 @@ export function ConferenceView({
   conference,
   summary,
   onUpdateItem,
-  onUpdateExpectedValue,
+  onUpdateSecurityValue,
+  onUpdateDifference,
   onFinalize,
   onBack,
 }: ConferenceViewProps) {
@@ -46,10 +48,10 @@ export function ConferenceView({
   };
 
   const handleFinalize = () => {
-    if (summary.expectedValue === 0) {
+    if (summary.securityValue === 0) {
       toast({
-        title: 'Valor esperado obrigatório',
-        description: 'Por favor, informe o valor esperado antes de finalizar.',
+        title: 'Segurança obrigatória',
+        description: 'Por favor, informe o valor de segurança antes de finalizar.',
         variant: 'destructive',
       });
       return;
@@ -136,8 +138,10 @@ export function ConferenceView({
       {/* Summary Cards */}
       <SummaryCards
         summary={summary}
-        expectedValue={conference.expectedValue}
-        onExpectedValueChange={onUpdateExpectedValue}
+        securityValue={conference.securityValue}
+        difference={conference.difference}
+        onSecurityValueChange={onUpdateSecurityValue}
+        onDifferenceChange={onUpdateDifference}
         isReadOnly={isReadOnly}
       />
 

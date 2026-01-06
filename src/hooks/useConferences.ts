@@ -54,7 +54,8 @@ export function useConferences() {
       responsible,
       status: 'Em andamento',
       items: allItems,
-      expectedValue: 0,
+      securityValue: 0,
+      difference: 0,
       createdAt: new Date().toISOString(),
     };
 
@@ -85,14 +86,19 @@ export function useConferences() {
     });
   };
 
-  const updateExpectedValue = (value: number) => {
+  const updateSecurityValue = (value: number) => {
     if (!currentConference || currentConference.status === 'Finalizada') return;
-    setCurrentConference(prev => prev ? { ...prev, expectedValue: value } : prev);
+    setCurrentConference(prev => prev ? { ...prev, securityValue: value } : prev);
+  };
+
+  const updateDifference = (value: number) => {
+    if (!currentConference || currentConference.status === 'Finalizada') return;
+    setCurrentConference(prev => prev ? { ...prev, difference: value } : prev);
   };
 
   const calculateSummary = (conference: Conference | null): ConferenceSummary => {
     if (!conference) {
-      return { totalCoins: 0, totalBills: 0, totalGeneral: 0, expectedValue: 0, difference: 0 };
+      return { totalCoins: 0, totalBills: 0, totalGeneral: 0, securityValue: 0, difference: 0 };
     }
 
     const totalCoins = conference.items
@@ -109,8 +115,8 @@ export function useConferences() {
       totalCoins,
       totalBills,
       totalGeneral,
-      expectedValue: conference.expectedValue,
-      difference: totalGeneral - conference.expectedValue,
+      securityValue: conference.securityValue,
+      difference: conference.difference, // Diferença agora é manual
     };
   };
 
@@ -150,7 +156,8 @@ export function useConferences() {
     currentConference,
     createNewConference,
     updateItem,
-    updateExpectedValue,
+    updateSecurityValue,
+    updateDifference,
     calculateSummary,
     finalizeConference,
     loadConference,

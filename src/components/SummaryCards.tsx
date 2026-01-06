@@ -1,18 +1,22 @@
 import { ConferenceSummary } from '@/types/conference';
 import { DifferenceIndicator } from './DifferenceIndicator';
-import { Coins, Banknote, Wallet, Target } from 'lucide-react';
+import { Coins, Banknote, Wallet, Shield } from 'lucide-react';
 
 interface SummaryCardsProps {
   summary: ConferenceSummary;
-  expectedValue: number;
-  onExpectedValueChange: (value: number) => void;
+  securityValue: number;
+  difference: number;
+  onSecurityValueChange: (value: number) => void;
+  onDifferenceChange: (value: number) => void;
   isReadOnly: boolean;
 }
 
 export function SummaryCards({ 
   summary, 
-  expectedValue, 
-  onExpectedValueChange, 
+  securityValue, 
+  difference,
+  onSecurityValueChange,
+  onDifferenceChange,
   isReadOnly 
 }: SummaryCardsProps) {
   const formatCurrency = (value: number): string => {
@@ -57,35 +61,46 @@ export function SummaryCards({
         </p>
       </div>
 
-      {/* Valor Esperado */}
+      {/* Segurança (antigo Valor Esperado) */}
       <div className="bg-card rounded-lg border p-4 card-shadow">
         <div className="flex items-center gap-2 text-muted-foreground mb-2">
-          <Target size={18} />
-          <span className="text-sm font-medium">Valor Esperado</span>
+          <Shield size={18} />
+          <span className="text-sm font-medium">Segurança</span>
         </div>
         {isReadOnly ? (
           <p className="text-2xl font-bold font-body text-foreground">
-            {formatCurrency(expectedValue)}
+            {formatCurrency(securityValue)}
           </p>
         ) : (
           <input
             type="number"
             step="0.01"
             min="0"
-            value={expectedValue || ''}
-            onChange={(e) => onExpectedValueChange(parseFloat(e.target.value) || 0)}
+            value={securityValue || ''}
+            onChange={(e) => onSecurityValueChange(parseFloat(e.target.value) || 0)}
             className="w-full text-2xl font-bold font-body bg-transparent border-b border-dashed border-muted-foreground/30 focus:border-primary focus:outline-none text-foreground"
             placeholder="0,00"
           />
         )}
       </div>
 
-      {/* Diferença */}
+      {/* Diferença (agora manual) */}
       <div className="bg-card rounded-lg border p-4 card-shadow">
         <div className="flex items-center gap-2 text-muted-foreground mb-2">
           <span className="text-sm font-medium">Diferença</span>
         </div>
-        <DifferenceIndicator difference={summary.difference} size="lg" />
+        {isReadOnly ? (
+          <DifferenceIndicator difference={difference} size="lg" />
+        ) : (
+          <input
+            type="number"
+            step="0.01"
+            value={difference || ''}
+            onChange={(e) => onDifferenceChange(parseFloat(e.target.value) || 0)}
+            className="w-full text-2xl font-bold font-body bg-transparent border-b border-dashed border-muted-foreground/30 focus:border-primary focus:outline-none text-foreground"
+            placeholder="0,00"
+          />
+        )}
       </div>
     </div>
   );
