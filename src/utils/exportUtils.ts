@@ -1,13 +1,20 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Conference, ConferenceSummary } from '@/types/conference';
+import { Conference, ConferenceSummary, SpecialDenomination } from '@/types/conference';
 
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(value);
+};
+
+const formatDenomination = (denomination: number | SpecialDenomination): string => {
+  if (typeof denomination === 'string') {
+    return denomination;
+  }
+  return formatCurrency(denomination);
 };
 
 const formatDate = (dateStr: string): string => {
@@ -23,7 +30,7 @@ const generateFileName = (conference: Conference, extension: string): string => 
 
 export const exportToExcel = (conference: Conference, summary: ConferenceSummary): void => {
   const itemsData = conference.items.map(item => ({
-    'Denominação': formatCurrency(item.denomination),
+    'Denominação': formatDenomination(item.denomination),
     'Tipo': item.currencyType,
     'Quantidade': item.quantity,
     'Valor Calculado': formatCurrency(item.calculatedValue),
@@ -77,7 +84,7 @@ export const exportToPDF = (conference: Conference, summary: ConferenceSummary):
 
   // Items table
   const itemsBody = conference.items.map(item => [
-    formatCurrency(item.denomination),
+    formatDenomination(item.denomination),
     item.currencyType,
     item.quantity.toString(),
     formatCurrency(item.calculatedValue),
