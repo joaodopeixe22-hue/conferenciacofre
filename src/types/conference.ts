@@ -11,7 +11,7 @@ export const SPECIAL_DENOMINATIONS = ['Troco', 'Diversos'] as const;
 export type SpecialDenomination = typeof SPECIAL_DENOMINATIONS[number];
 
 // Denominações que permitem edição manual do valor calculado (inclui R$ 2,00)
-export const MANUAL_VALUE_DENOMINATIONS: (Denomination | SpecialDenomination)[] = [2.00, 'Troco', 'Diversos'];
+export const MANUAL_VALUE_DENOMINATIONS: (Denomination | SpecialDenomination)[] = [2.00, 5.00, 10.00, 20.00, 50.00, 100.00, 'Troco', 'Diversos'];
 
 export interface ConferenceItem {
   id: string;

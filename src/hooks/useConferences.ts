@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Conference, ConferenceItem, ConferenceSummary, DENOMINATIONS, SPECIAL_DENOMINATIONS, SpecialDenomination } from '@/types/conference';
+import { Conference, ConferenceItem, ConferenceSummary, DENOMINATIONS, SPECIAL_DENOMINATIONS, SpecialDenomination, MANUAL_VALUE_DENOMINATIONS } from '@/types/conference';
 
 const STORAGE_KEY = 'pharmacy-vault-conferences';
 
@@ -30,7 +30,7 @@ export function useConferences() {
       currencyType: denom < 1 ? 'Moeda' : denom <= 2 ? 'Moeda' : 'Nota',
       financialCategory: 'Cofre',
       observations: '',
-      isManualValue: denom === 2.00, // R$ 2,00 permite edição manual
+      isManualValue: MANUAL_VALUE_DENOMINATIONS.includes(denom),
     }));
 
     // Adiciona itens especiais (Troco e Diversos)
