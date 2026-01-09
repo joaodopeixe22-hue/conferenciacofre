@@ -3,8 +3,8 @@ import { Conference, ConferenceSummary } from '@/types/conference';
 import { StatusBadge } from './StatusBadge';
 import { DifferenceIndicator } from './DifferenceIndicator';
 import { Button } from '@/components/ui/button';
-import { Eye, Download, FileSpreadsheet, FileText, Trash2, Filter, Calendar } from 'lucide-react';
-import { exportToExcel, exportToPDF, exportHistoryToExcel } from '@/utils/exportUtils';
+import { Eye, Image, FileText, Trash2, Filter, Calendar } from 'lucide-react';
+import { exportToImage, exportToPDF, exportHistoryToImage } from '@/utils/exportUtils';
 
 interface HistoryTableProps {
   conferences: Conference[];
@@ -48,10 +48,10 @@ export function HistoryTable({
     return true;
   }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const handleExportConference = (conf: Conference, type: 'excel' | 'pdf') => {
+  const handleExportConference = async (conf: Conference, type: 'image' | 'pdf') => {
     const summary = calculateSummary(conf);
-    if (type === 'excel') {
-      exportToExcel(conf, summary);
+    if (type === 'image') {
+      await exportToImage(conf, summary);
     } else {
       exportToPDF(conf, summary);
     }
@@ -113,10 +113,10 @@ export function HistoryTable({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => exportHistoryToExcel(filteredConferences, calculateSummary)}
+              onClick={() => exportHistoryToImage(filteredConferences, calculateSummary)}
               disabled={filteredConferences.length === 0}
             >
-              <FileSpreadsheet size={16} className="mr-2" />
+              <Image size={16} className="mr-2" />
               Exportar Histórico
             </Button>
           </div>
@@ -171,10 +171,10 @@ export function HistoryTable({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleExportConference(conf, 'excel')}
-                        title="Exportar Excel"
+                        onClick={() => handleExportConference(conf, 'image')}
+                        title="Exportar Relatório"
                       >
-                        <FileSpreadsheet size={16} />
+                        <Image size={16} />
                       </Button>
                       <Button
                         variant="ghost"
