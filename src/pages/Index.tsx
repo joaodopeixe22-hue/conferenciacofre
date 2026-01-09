@@ -2,6 +2,7 @@ import { useConferences } from '@/hooks/useConferences';
 import { NewConferenceForm } from '@/components/NewConferenceForm';
 import { ConferenceView } from '@/components/ConferenceView';
 import { HistoryTable } from '@/components/HistoryTable';
+import { TrendsDashboard } from '@/components/TrendsDashboard';
 import { Vault, Shield, History } from 'lucide-react';
 
 const Index = () => {
@@ -62,6 +63,14 @@ const Index = () => {
           <div className="space-y-8">
             {/* New Conference Form */}
             <NewConferenceForm onCreateConference={createNewConference} />
+
+            {/* Trends Dashboard */}
+            {conferences.length >= 2 && (
+              <TrendsDashboard 
+                conferences={conferences} 
+                calculateSummary={calculateSummary} 
+              />
+            )}
 
             {/* History Section */}
             <section>

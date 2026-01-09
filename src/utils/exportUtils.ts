@@ -72,7 +72,6 @@ export const exportToImage = async (conference: Conference, summary: ConferenceS
 
   container.innerHTML = `
     <div style="text-align: center; margin-bottom: 30px;">
-      <img src="/logo.png" alt="Logo" style="width: 80px; height: 80px; margin-bottom: 15px;" />
       <h1 style="font-size: 24px; font-weight: bold; color: #1a1a2e; margin: 0;">Conferência de Cofre</h1>
       <p style="font-size: 14px; color: #666; margin: 5px 0;">Farmácia - Sistema Auditável</p>
     </div>
@@ -304,7 +303,6 @@ export const exportHistoryToImage = async (conferences: Conference[], calculateS
 
   container.innerHTML = `
     <div style="text-align: center; margin-bottom: 30px;">
-      <img src="/logo.png" alt="Logo" style="width: 60px; height: 60px; margin-bottom: 10px;" />
       <h1 style="font-size: 22px; font-weight: bold; color: #1a1a2e; margin: 0;">Histórico de Conferências</h1>
       <p style="font-size: 12px; color: #666; margin: 5px 0;">Gerado em ${new Date().toLocaleString('pt-BR')}</p>
     </div>

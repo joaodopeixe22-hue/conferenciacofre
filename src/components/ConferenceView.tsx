@@ -3,6 +3,7 @@ import { StatusBadge } from './StatusBadge';
 import { SummaryCards } from './SummaryCards';
 import { CountingTable } from './CountingTable';
 import { ConferenceChecklist } from './ConferenceChecklist';
+import { ChangeAlertBanner } from './ChangeAlertBanner';
 import { Button } from '@/components/ui/button';
 import { exportToImage, exportToPDF } from '@/utils/exportUtils';
 import { 
@@ -143,15 +144,20 @@ export function ConferenceView({
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <SummaryCards
-        summary={summary}
-        securityValue={conference.securityValue}
-        difference={conference.difference}
-        onSecurityValueChange={onUpdateSecurityValue}
-        onDifferenceChange={onUpdateDifference}
-        isReadOnly={isReadOnly}
-      />
+      {/* Sticky Summary Cards */}
+      <div className="sticky top-[73px] z-40 bg-background py-4 -mx-4 px-4 border-b border-transparent transition-shadow [&.scrolled]:shadow-md [&.scrolled]:border-border">
+        <SummaryCards
+          summary={summary}
+          securityValue={conference.securityValue}
+          difference={conference.difference}
+          onSecurityValueChange={onUpdateSecurityValue}
+          onDifferenceChange={onUpdateDifference}
+          isReadOnly={isReadOnly}
+        />
+      </div>
+
+      {/* Change Alert Banner */}
+      {!isReadOnly && <ChangeAlertBanner items={conference.items} />}
 
       {/* Counting Table */}
       <div>
