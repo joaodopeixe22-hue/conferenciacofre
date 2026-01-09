@@ -4,11 +4,11 @@ import { SummaryCards } from './SummaryCards';
 import { CountingTable } from './CountingTable';
 import { ConferenceChecklist } from './ConferenceChecklist';
 import { Button } from '@/components/ui/button';
-import { exportToExcel, exportToPDF } from '@/utils/exportUtils';
+import { exportToImage, exportToPDF } from '@/utils/exportUtils';
 import { 
   CheckCircle2, 
   ArrowLeft, 
-  FileSpreadsheet, 
+  Image, 
   FileText, 
   Calendar, 
   Clock, 
@@ -64,16 +64,24 @@ export function ConferenceView({
     });
   };
 
-  const handleExport = (type: 'excel' | 'pdf') => {
-    if (type === 'excel') {
-      exportToExcel(conference, summary);
-    } else {
-      exportToPDF(conference, summary);
+  const handleExport = async (type: 'image' | 'pdf') => {
+    try {
+      if (type === 'image') {
+        await exportToImage(conference, summary);
+      } else {
+        exportToPDF(conference, summary);
+      }
+      toast({
+        title: 'Arquivo exportado!',
+        description: `A conferência foi exportada para ${type === 'image' ? 'JPEG' : 'PDF'}.`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Erro ao exportar',
+        description: 'Ocorreu um erro ao gerar o arquivo.',
+        variant: 'destructive',
+      });
     }
-    toast({
-      title: 'Arquivo exportado!',
-      description: `A conferência foi exportada para ${type.toUpperCase()}.`,
-    });
   };
 
   return (
@@ -94,9 +102,9 @@ export function ConferenceView({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => handleExport('excel')}>
-            <FileSpreadsheet size={16} className="mr-2" />
-            Excel
+          <Button variant="outline" size="sm" onClick={() => handleExport('image')}>
+            <Image size={16} className="mr-2" />
+            Relatório
           </Button>
           <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
             <FileText size={16} className="mr-2" />
