@@ -144,8 +144,8 @@ export function ConferenceView({
         </div>
       </div>
 
-      {/* Sticky Summary Cards */}
-      <div className="sticky top-[73px] z-40 bg-background py-4 -mx-4 px-4 border-b border-transparent transition-shadow [&.scrolled]:shadow-md [&.scrolled]:border-border">
+      {/* Summary Cards - Sticky only on desktop */}
+      <div className="md:sticky md:top-[73px] md:z-40 md:bg-background md:py-4 md:-mx-4 md:px-4 md:border-b md:border-transparent md:transition-shadow">
         <SummaryCards
           summary={summary}
           securityValue={conference.securityValue}
