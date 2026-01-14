@@ -3,9 +3,14 @@ import { NewConferenceForm } from '@/components/NewConferenceForm';
 import { ConferenceView } from '@/components/ConferenceView';
 import { HistoryTable } from '@/components/HistoryTable';
 import { TrendsDashboard } from '@/components/TrendsDashboard';
+import { MobileHistoryCards } from '@/components/mobile/MobileHistoryCards';
+import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
+import { useViewMode } from '@/contexts/ViewModeContext';
 import { Vault, Shield, History } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Index = () => {
+  const { isMobileMode } = useViewMode();
   const {
     conferences,
     currentConference,
@@ -23,32 +28,60 @@ const Index = () => {
   const summary = calculateSummary(currentConference);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={cn(
+      "min-h-screen bg-background",
+      isMobileMode && "pb-4"
+    )}>
       {/* Header */}
-      <header className="bg-card border-b sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header className={cn(
+        "bg-card border-b",
+        !isMobileMode && "sticky top-0 z-50"
+      )}>
+        <div className={cn(
+          "container mx-auto py-4",
+          isMobileMode ? "px-3" : "px-4"
+        )}>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-lg">
-              <Vault className="w-6 h-6 text-primary-foreground" />
+            <div className={cn(
+              "bg-primary rounded-lg",
+              isMobileMode ? "p-1.5" : "p-2"
+            )}>
+              <Vault className={cn(
+                "text-primary-foreground",
+                isMobileMode ? "w-5 h-5" : "w-6 h-6"
+              )} />
             </div>
-            <div>
-              <h1 className="text-xl font-bold font-display text-foreground">
+            <div className="flex-1 min-w-0">
+              <h1 className={cn(
+                "font-bold font-display text-foreground truncate",
+                isMobileMode ? "text-lg" : "text-xl"
+              )}>
                 Conferência de Cofre
               </h1>
-              <p className="text-sm text-muted-foreground">
-                Sistema de auditoria financeira para farmácia
-              </p>
+              {!isMobileMode && (
+                <p className="text-sm text-muted-foreground">
+                  Sistema de auditoria financeira para farmácia
+                </p>
+              )}
             </div>
-            <div className="ml-auto flex items-center gap-2 text-muted-foreground">
-              <Shield size={16} />
-              <span className="text-sm font-medium">Sistema Auditável</span>
+            <div className="flex items-center gap-2">
+              <ViewModeSwitcher />
+              {!isMobileMode && (
+                <div className="flex items-center gap-2 text-muted-foreground ml-2">
+                  <Shield size={16} />
+                  <span className="text-sm font-medium">Sistema Auditável</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
+      <main className={cn(
+        "container mx-auto py-6",
+        isMobileMode ? "px-3" : "px-4"
+      )}>
         {currentConference ? (
           <ConferenceView
             conference={currentConference}
@@ -60,7 +93,9 @@ const Index = () => {
             onBack={clearCurrentConference}
           />
         ) : (
-          <div className="space-y-8">
+          <div className={cn(
+            isMobileMode ? "space-y-6" : "space-y-8"
+          )}>
             {/* New Conference Form */}
             <NewConferenceForm onCreateConference={createNewConference} />
 
@@ -75,33 +110,54 @@ const Index = () => {
             {/* History Section */}
             <section>
               <div className="flex items-center gap-2 mb-4">
-                <History size={20} className="text-muted-foreground" />
-                <h2 className="text-lg font-semibold font-display text-foreground">
+                <History size={isMobileMode ? 18 : 20} className="text-muted-foreground" />
+                <h2 className={cn(
+                  "font-semibold font-display text-foreground",
+                  isMobileMode ? "text-base" : "text-lg"
+                )}>
                   Histórico de Conferências
                 </h2>
                 <span className="text-sm text-muted-foreground ml-2">
-                  ({conferences.length} registros)
+                  ({conferences.length})
                 </span>
               </div>
-              <HistoryTable
-                conferences={conferences}
-                onViewConference={loadConference}
-                onDeleteConference={deleteConference}
-                calculateSummary={calculateSummary}
-              />
+              
+              {isMobileMode ? (
+                <MobileHistoryCards
+                  conferences={conferences}
+                  onViewConference={loadConference}
+                  onDeleteConference={deleteConference}
+                  calculateSummary={calculateSummary}
+                />
+              ) : (
+                <HistoryTable
+                  conferences={conferences}
+                  onViewConference={loadConference}
+                  onDeleteConference={deleteConference}
+                  calculateSummary={calculateSummary}
+                />
+              )}
             </section>
           </div>
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t mt-auto">
-        <div className="container mx-auto px-4 py-4">
-          <p className="text-sm text-muted-foreground text-center">
-            © {new Date().getFullYear()} Conferência de Cofre – Farmácia | Sistema de uso interno
-          </p>
-        </div>
-      </footer>
+      {/* Footer - hide on mobile when viewing conference */}
+      {!(isMobileMode && currentConference) && (
+        <footer className="border-t mt-auto">
+          <div className={cn(
+            "container mx-auto py-4",
+            isMobileMode ? "px-3" : "px-4"
+          )}>
+            <p className={cn(
+              "text-muted-foreground text-center",
+              isMobileMode ? "text-xs" : "text-sm"
+            )}>
+              © {new Date().getFullYear()} Conferência de Cofre – Farmácia
+            </p>
+          </div>
+        </footer>
+      )}
     </div>
   );
 };
