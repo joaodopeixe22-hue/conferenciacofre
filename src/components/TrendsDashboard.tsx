@@ -3,6 +3,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, ReferenceLine 
 } from 'recharts';
+import { useViewMode } from '@/contexts/ViewModeContext';
+import { cn } from '@/lib/utils';
 import { TrendingUp, AlertCircle } from 'lucide-react';
 
 interface TrendsDashboardProps {
@@ -25,6 +27,8 @@ const formatDate = (dateStr: string): string => {
 };
 
 export function TrendsDashboard({ conferences, calculateSummary }: TrendsDashboardProps) {
+  const { isMobileMode } = useViewMode();
+
   // Get last 30 conferences sorted by date
   const sortedConferences = [...conferences]
     .filter(c => c.status === 'Finalizada')
@@ -71,44 +75,56 @@ export function TrendsDashboard({ conferences, calculateSummary }: TrendsDashboa
     .sort((a, b) => (b[1].negative / b[1].total) - (a[1].negative / a[1].total))[0];
 
   return (
-    <div className="bg-card rounded-lg border p-6 card-shadow mb-6">
+    <div className={cn(
+      "bg-card rounded-lg border card-shadow mb-6",
+      isMobileMode ? "p-4" : "p-6"
+    )}>
       <div className="flex items-center gap-2 mb-4">
-        <TrendingUp size={20} className="text-primary" />
-        <h2 className="text-lg font-semibold font-display text-foreground">
+        <TrendingUp size={isMobileMode ? 18 : 20} className="text-primary" />
+        <h2 className={cn(
+          "font-semibold font-display text-foreground",
+          isMobileMode ? "text-base" : "text-lg"
+        )}>
           Dashboard de Tendências
         </h2>
-        <span className="text-sm text-muted-foreground ml-2">
-          (Últimas {sortedConferences.length} conferências)
-        </span>
+        {!isMobileMode && (
+          <span className="text-sm text-muted-foreground ml-2">
+            (Últimas {sortedConferences.length} conferências)
+          </span>
+        )}
       </div>
 
       {/* Chart */}
-      <div className="h-64 mb-6">
+      <div className={cn(
+        "mb-4",
+        isMobileMode ? "h-40" : "h-64 mb-6"
+      )}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+          <LineChart data={chartData} margin={{ top: 5, right: isMobileMode ? 10 : 20, left: isMobileMode ? 0 : 10, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
             <XAxis 
               dataKey="date" 
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: isMobileMode ? 9 : 11 }}
               tickLine={false}
+              interval={isMobileMode ? 'preserveStartEnd' : 0}
             />
             <YAxis 
               tickFormatter={(value) => `R$ ${value}`}
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: isMobileMode ? 9 : 11 }}
               tickLine={false}
               axisLine={false}
+              width={isMobileMode ? 50 : 60}
             />
             <Tooltip 
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div className="bg-popover border rounded-lg shadow-lg p-3 text-sm">
-                      <p className="font-medium">{new Date(data.fullDate).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                      <p className="text-muted-foreground">Turno: {data.shift}</p>
-                      <p className="text-muted-foreground">Responsável: {data.responsible}</p>
+                    <div className="bg-popover border rounded-lg shadow-lg p-2 text-xs">
+                      <p className="font-medium">{new Date(data.fullDate).toLocaleDateString('pt-BR')}</p>
+                      <p className="text-muted-foreground">{data.shift} • {data.responsible}</p>
                       <p className={`font-bold mt-1 ${data.difference === 0 ? 'text-success' : data.difference > 0 ? 'text-info' : 'text-destructive'}`}>
-                        Diferença: {formatCurrency(data.difference)}
+                        {formatCurrency(data.difference)}
                       </p>
                     </div>
                   );
@@ -133,59 +149,110 @@ export function TrendsDashboard({ conferences, calculateSummary }: TrendsDashboa
                   <circle 
                     cx={cx} 
                     cy={cy} 
-                    r={4} 
+                    r={isMobileMode ? 3 : 4} 
                     fill={color}
                     stroke="white"
-                    strokeWidth={2}
+                    strokeWidth={isMobileMode ? 1 : 2}
                   />
                 );
               }}
-              activeDot={{ r: 6, strokeWidth: 2 }}
+              activeDot={{ r: isMobileMode ? 4 : 6, strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {/* Insights Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-muted/50 rounded-lg p-3 text-center">
-          <p className="text-xs text-muted-foreground mb-1">Média de Diferença</p>
-          <p className={`text-lg font-bold ${avgDifference === 0 ? 'text-success' : avgDifference > 0 ? 'text-info' : 'text-destructive'}`}>
+      <div className={cn(
+        "grid gap-3",
+        isMobileMode ? "grid-cols-2" : "grid-cols-2 md:grid-cols-4 gap-4"
+      )}>
+        <div className={cn(
+          "bg-muted/50 rounded-lg text-center",
+          isMobileMode ? "p-2" : "p-3"
+        )}>
+          <p className={cn(
+            "text-muted-foreground mb-1",
+            isMobileMode ? "text-[10px]" : "text-xs"
+          )}>Média</p>
+          <p className={cn(
+            "font-bold",
+            isMobileMode ? "text-sm" : "text-lg",
+            avgDifference === 0 ? 'text-success' : avgDifference > 0 ? 'text-info' : 'text-destructive'
+          )}>
             {formatCurrency(avgDifference)}
           </p>
         </div>
 
-        <div className="bg-success/10 rounded-lg p-3 text-center">
-          <p className="text-xs text-muted-foreground mb-1">Fechamentos Perfeitos</p>
-          <p className="text-lg font-bold text-success">
-            {perfectCount} <span className="text-xs font-normal">({Math.round(perfectCount / sortedConferences.length * 100)}%)</span>
+        <div className={cn(
+          "bg-success/10 rounded-lg text-center",
+          isMobileMode ? "p-2" : "p-3"
+        )}>
+          <p className={cn(
+            "text-muted-foreground mb-1",
+            isMobileMode ? "text-[10px]" : "text-xs"
+          )}>Perfeitos</p>
+          <p className={cn(
+            "font-bold text-success",
+            isMobileMode ? "text-sm" : "text-lg"
+          )}>
+            {perfectCount} <span className={cn(isMobileMode ? "text-[10px]" : "text-xs", "font-normal")}>({Math.round(perfectCount / sortedConferences.length * 100)}%)</span>
           </p>
         </div>
 
-        <div className="bg-destructive/10 rounded-lg p-3 text-center">
-          <p className="text-xs text-muted-foreground mb-1">Com Falta</p>
-          <p className="text-lg font-bold text-destructive">
-            {negativeCount} <span className="text-xs font-normal">({Math.round(negativeCount / sortedConferences.length * 100)}%)</span>
+        <div className={cn(
+          "bg-destructive/10 rounded-lg text-center",
+          isMobileMode ? "p-2" : "p-3"
+        )}>
+          <p className={cn(
+            "text-muted-foreground mb-1",
+            isMobileMode ? "text-[10px]" : "text-xs"
+          )}>Com Falta</p>
+          <p className={cn(
+            "font-bold text-destructive",
+            isMobileMode ? "text-sm" : "text-lg"
+          )}>
+            {negativeCount} <span className={cn(isMobileMode ? "text-[10px]" : "text-xs", "font-normal")}>({Math.round(negativeCount / sortedConferences.length * 100)}%)</span>
           </p>
         </div>
 
-        <div className="bg-info/10 rounded-lg p-3 text-center">
-          <p className="text-xs text-muted-foreground mb-1">Com Sobra</p>
-          <p className="text-lg font-bold text-info">
-            {positiveCount} <span className="text-xs font-normal">({Math.round(positiveCount / sortedConferences.length * 100)}%)</span>
+        <div className={cn(
+          "bg-info/10 rounded-lg text-center",
+          isMobileMode ? "p-2" : "p-3"
+        )}>
+          <p className={cn(
+            "text-muted-foreground mb-1",
+            isMobileMode ? "text-[10px]" : "text-xs"
+          )}>Com Sobra</p>
+          <p className={cn(
+            "font-bold text-info",
+            isMobileMode ? "text-sm" : "text-lg"
+          )}>
+            {positiveCount} <span className={cn(isMobileMode ? "text-[10px]" : "text-xs", "font-normal")}>({Math.round(positiveCount / sortedConferences.length * 100)}%)</span>
           </p>
         </div>
       </div>
 
       {/* Pattern Alert */}
       {problematicShift && problematicShift[1].negative / problematicShift[1].total > 0.3 && (
-        <div className="mt-4 bg-warning/10 border border-warning/30 rounded-lg p-3 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-warning mt-0.5" />
+        <div className={cn(
+          "mt-4 bg-warning/10 border border-warning/30 rounded-lg flex items-start gap-2",
+          isMobileMode ? "p-2" : "p-3 gap-3"
+        )}>
+          <AlertCircle className={cn(
+            "text-warning mt-0.5",
+            isMobileMode ? "w-4 h-4" : "w-5 h-5"
+          )} />
           <div>
-            <p className="text-sm font-medium text-warning-foreground">Padrão Identificado</p>
-            <p className="text-sm text-muted-foreground">
-              O turno <span className="font-medium">{problematicShift[0]}</span> apresenta {Math.round(problematicShift[1].negative / problematicShift[1].total * 100)}% das conferências com diferença negativa. 
-              Considere investigar os processos deste turno.
+            <p className={cn(
+              "font-medium text-warning-foreground",
+              isMobileMode ? "text-xs" : "text-sm"
+            )}>Padrão Identificado</p>
+            <p className={cn(
+              "text-muted-foreground",
+              isMobileMode ? "text-xs" : "text-sm"
+            )}>
+              O turno <span className="font-medium">{problematicShift[0]}</span> apresenta {Math.round(problematicShift[1].negative / problematicShift[1].total * 100)}% de diferença negativa.
             </p>
           </div>
         </div>
