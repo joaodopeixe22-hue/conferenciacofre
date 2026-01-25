@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useViewMode } from '@/contexts/ViewModeContext';
 import { cn } from '@/lib/utils';
 import { Calendar, Clock, User, Plus } from 'lucide-react';
+import { getLocalDateString } from '@/utils/dateUtils';
 
 interface NewConferenceFormProps {
   onCreateConference: (date: string, shift: ShiftType, responsible: string) => void;
@@ -13,7 +14,7 @@ const SHIFTS: ShiftType[] = ['Abertura', 'Intermediário', 'Fechamento'];
 
 export function NewConferenceForm({ onCreateConference }: NewConferenceFormProps) {
   const { isMobileMode } = useViewMode();
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(getLocalDateString());
   const [shift, setShift] = useState<ShiftType>('Abertura');
   const [responsible, setResponsible] = useState('');
 

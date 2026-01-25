@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { Conference, ConferenceSummary, SpecialDenomination } from '@/types/conference';
+import { formatDateBR, formatDateLongBR } from '@/utils/dateUtils';
 
 interface ChecklistItem {
   id: string;
@@ -23,18 +24,9 @@ const formatDenomination = (denomination: number | SpecialDenomination): string 
   return formatCurrency(denomination);
 };
 
-const formatDate = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleDateString('pt-BR');
-};
-
-const formatDateLong = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleDateString('pt-BR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
+// Usar funções do dateUtils para evitar problemas de fuso horário
+const formatDate = formatDateBR;
+const formatDateLong = formatDateLongBR;
 
 const generateFileName = (conference: Conference, extension: string): string => {
   const date = formatDate(conference.date).replace(/\//g, '-');

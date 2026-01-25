@@ -6,6 +6,7 @@ import {
 import { useViewMode } from '@/contexts/ViewModeContext';
 import { cn } from '@/lib/utils';
 import { TrendingUp, AlertCircle } from 'lucide-react';
+import { formatDateChart, formatDateBR } from '@/utils/dateUtils';
 
 interface TrendsDashboardProps {
   conferences: Conference[];
@@ -19,12 +20,7 @@ const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
-const formatDate = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-  });
-};
+const formatDate = formatDateChart;
 
 export function TrendsDashboard({ conferences, calculateSummary }: TrendsDashboardProps) {
   const { isMobileMode } = useViewMode();
@@ -121,7 +117,7 @@ export function TrendsDashboard({ conferences, calculateSummary }: TrendsDashboa
                   const data = payload[0].payload;
                   return (
                     <div className="bg-popover border rounded-lg shadow-lg p-2 text-xs">
-                      <p className="font-medium">{new Date(data.fullDate).toLocaleDateString('pt-BR')}</p>
+                      <p className="font-medium">{formatDateBR(data.fullDate)}</p>
                       <p className="text-muted-foreground">{data.shift} • {data.responsible}</p>
                       <p className={`font-bold mt-1 ${data.difference === 0 ? 'text-success' : data.difference > 0 ? 'text-info' : 'text-destructive'}`}>
                         {formatCurrency(data.difference)}

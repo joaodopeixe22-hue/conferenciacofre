@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, Image, FileText, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { exportToImage, exportToPDF } from '@/utils/exportUtils';
 import { useState } from 'react';
+import { formatDateShortBR, getMonthFromDateString } from '@/utils/dateUtils';
 
 interface MobileHistoryCardsProps {
   conferences: Conference[];
@@ -23,13 +24,7 @@ export function MobileHistoryCards({
   const [filterMonth, setFilterMonth] = useState<string>('');
   const [filterResponsible, setFilterResponsible] = useState<string>('');
 
-  const formatDate = (dateStr: string): string => {
-    return new Date(dateStr).toLocaleDateString('pt-BR', {
-      weekday: 'short',
-      day: '2-digit',
-      month: '2-digit',
-    });
-  };
+  const formatDate = formatDateShortBR;
 
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -40,13 +35,13 @@ export function MobileHistoryCards({
 
   const uniqueResponsibles = [...new Set(conferences.map(c => c.responsible))];
   const uniqueMonths = [...new Set(conferences.map(c => {
-    const date = new Date(c.date);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const { year, month } = getMonthFromDateString(c.date);
+    return `${year}-${String(month).padStart(2, '0')}`;
   }))].sort().reverse();
 
   const filteredConferences = conferences.filter(conf => {
-    const confMonth = new Date(conf.date);
-    const monthStr = `${confMonth.getFullYear()}-${String(confMonth.getMonth() + 1).padStart(2, '0')}`;
+    const { year, month } = getMonthFromDateString(conf.date);
+    const monthStr = `${year}-${String(month).padStart(2, '0')}`;
     
     if (filterMonth && monthStr !== filterMonth) return false;
     if (filterResponsible && conf.responsible !== filterResponsible) return false;
