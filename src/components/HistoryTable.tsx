@@ -5,6 +5,7 @@ import { DifferenceIndicator } from './DifferenceIndicator';
 import { Button } from '@/components/ui/button';
 import { Eye, Image, FileText, Trash2, Filter, Calendar } from 'lucide-react';
 import { exportToImage, exportToPDF, exportHistoryToImage } from '@/utils/exportUtils';
+import { formatDateBR, getMonthFromDateString } from '@/utils/dateUtils';
 
 interface HistoryTableProps {
   conferences: Conference[];
@@ -22,9 +23,7 @@ export function HistoryTable({
   const [filterMonth, setFilterMonth] = useState<string>('');
   const [filterResponsible, setFilterResponsible] = useState<string>('');
 
-  const formatDate = (dateStr: string): string => {
-    return new Date(dateStr).toLocaleDateString('pt-BR');
-  };
+  const formatDate = formatDateBR;
 
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -35,13 +34,13 @@ export function HistoryTable({
 
   const uniqueResponsibles = [...new Set(conferences.map(c => c.responsible))];
   const uniqueMonths = [...new Set(conferences.map(c => {
-    const date = new Date(c.date);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const { year, month } = getMonthFromDateString(c.date);
+    return `${year}-${String(month).padStart(2, '0')}`;
   }))].sort().reverse();
 
   const filteredConferences = conferences.filter(conf => {
-    const confMonth = new Date(conf.date);
-    const monthStr = `${confMonth.getFullYear()}-${String(confMonth.getMonth() + 1).padStart(2, '0')}`;
+    const { year, month } = getMonthFromDateString(conf.date);
+    const monthStr = `${year}-${String(month).padStart(2, '0')}`;
     
     if (filterMonth && monthStr !== filterMonth) return false;
     if (filterResponsible && conf.responsible !== filterResponsible) return false;
